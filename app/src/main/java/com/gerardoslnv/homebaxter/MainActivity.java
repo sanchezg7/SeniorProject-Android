@@ -24,7 +24,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
 
     EditText ipAddress_ET; //edit text
     String ipAddress;
@@ -40,18 +40,7 @@ public class MainActivity extends AppCompatActivity
         ipAddress_ET = (EditText) findViewById(R.id.ipAddress_ET);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ipAddress = ipAddress_ET.getText().toString();
-                Snackbar.make(view, "Socket, ipAddress: " + ipAddress, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                //Toast.makeText(MainActivity.this, ipAddress, Toast.LENGTH_SHORT).show();
-                new socketComm().execute(ipAddress); //GS Added
-
-            }
-        });
+        fab.setOnClickListener(this);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -63,6 +52,22 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //GS Added
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId())
+        {
+            case R.id.fab:
+                ipAddress = ipAddress_ET.getText().toString();
+                Snackbar.make(view, "Socket, ipAddress: " + ipAddress, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
+                //Toast.makeText(MainActivity.this, ipAddress, Toast.LENGTH_SHORT).show();
+                new socketComm().execute(ipAddress); //GS Added
+                break;
+        }
     }
 
     @Override
@@ -118,6 +123,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+
+
+
+    //Socket Reception Task **********
     private class socketComm extends AsyncTask<String, Void, String>{
 
         @Override
