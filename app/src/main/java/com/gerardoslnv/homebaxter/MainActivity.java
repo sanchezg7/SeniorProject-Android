@@ -1,5 +1,6 @@
 package com.gerardoslnv.homebaxter;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -27,8 +35,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Calling AsyncTask", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                new socketComm().execute();
             }
         });
 
@@ -93,5 +102,36 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private class socketComm extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+            Socket s;
+            String payLoad = null;
+            String hostname = "10.224.21.50";
+            try{
+
+
+                s = new Socket(hostname, 1024);
+                BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+
+                payLoad = input.readLine();
+
+            } catch (UnknownHostException e){
+                e.printStackTrace();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+
+            return payLoad;
+        }
+
+        @Override
+        protected void onPostExecute(String result){
+            TextView txt = (TextView) findViewById(R.id.payLoad);
+            txt.setText(result);
+        }
     }
 }
