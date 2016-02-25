@@ -13,7 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +26,9 @@ import java.net.UnknownHostException;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    EditText ipAddress_ET; //edit text
+    String ipAddress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,13 +36,20 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Add ipAddress Edit Text
+        ipAddress_ET = (EditText) findViewById(R.id.ipAddress_ET);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Calling AsyncTask", Snackbar.LENGTH_LONG)
+                ipAddress = ipAddress_ET.getText().toString();
+                Snackbar.make(view, "Socket, ipAddress: " + ipAddress, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                new socketComm().execute();
+
+                //Toast.makeText(MainActivity.this, ipAddress, Toast.LENGTH_SHORT).show();
+                new socketComm().execute(ipAddress); //GS Added
+
             }
         });
 
@@ -49,6 +61,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //GS Added
     }
 
     @Override
@@ -110,10 +124,9 @@ public class MainActivity extends AppCompatActivity
         protected String doInBackground(String... params) {
             Socket s;
             String payLoad = null;
-            String hostname = "10.224.21.50";
+            String hostname = params[0]; //ipAddress;
+
             try{
-
-
                 s = new Socket(hostname, 1024);
                 BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
