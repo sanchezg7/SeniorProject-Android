@@ -1,9 +1,14 @@
 package com.gerardoslnv.homebaxter;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,8 +31,8 @@ import java.net.UnknownHostException;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
 
-    EditText ipAddress_ET; //edit text
     String ipAddress;
+    FragmentManager fragManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +40,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //Add ipAddress Edit Text
-        ipAddress_ET = (EditText) findViewById(R.id.ipAddress_ET);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
@@ -52,22 +54,17 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //GS Added
+        fragManager = getFragmentManager();
+        Fragment helloFragment = new hello_Fragment();
+        fragManager.beginTransaction().replace(R.id.main_content, helloFragment).commit();
+        fragManager.executePendingTransactions();
     }
 
+
     @Override
-    public void onClick(View view) {
+    public void onClick(View view){
 
-        switch (view.getId())
-        {
-            case R.id.fab:
-                ipAddress = ipAddress_ET.getText().toString();
-                Snackbar.make(view, "Socket, ipAddress: " + ipAddress, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                //Toast.makeText(MainActivity.this, ipAddress, Toast.LENGTH_SHORT).show();
-                new socketComm().execute(ipAddress); //GS Added
-                break;
-        }
+        return;
     }
 
     @Override
@@ -107,10 +104,20 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        int containerId = R.id.main_content;
 
-        if (id == R.id.nav_camera) {
+
+        FragmentTransaction fragmentTransaction = fragManager.beginTransaction();
+        Fragment myFragment = null;
+
+        if (id == R.id.nav_live_feed) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_grasp_object) {
+            Bundle bundle = new Bundle();
+            myFragment = new grasp_objectFragment();
+            bundle.putString(getResources().getString(R.string.key_ip_address), ipAddress); //pass ip address to other fragments
+            myFragment.setArguments(bundle);
+            fragmentTransaction.replace(containerId,myFragment, "Some Title Here");
 
         } else if (id == R.id.nav_share) {
 
@@ -118,6 +125,8 @@ public class MainActivity extends AppCompatActivity
 
         }
 
+        fragmentTransaction.commit();
+        fragManager.executePendingTransactions();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -126,34 +135,5 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    //Socket Reception Task **********
-    private class socketComm extends AsyncTask<String, Void, String>{
 
-        @Override
-        protected String doInBackground(String... params) {
-            Socket s;
-            String payLoad = null;
-            String hostname = params[0]; //ipAddress;
-
-            try{
-                s = new Socket(hostname, 1024);
-                BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-
-                payLoad = input.readLine();
-
-            } catch (UnknownHostException e){
-                e.printStackTrace();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-
-            return payLoad;
-        }
-
-        @Override
-        protected void onPostExecute(String result){
-            TextView txt = (TextView) findViewById(R.id.payLoad);
-            txt.setText(result);
-        }
-    }
 }

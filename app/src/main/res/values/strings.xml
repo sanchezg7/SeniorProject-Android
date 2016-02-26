@@ -10,4 +10,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="string_grasp_object">Grasp an Object</string>
+    <string name="string_live_feed">Live Feed</string>
+    <string name="key_ip_address">key_ip_address</string>
 </resources>
