@@ -11,6 +11,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +48,8 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
         ipAddress_ET = (EditText) view.findViewById(R.id.ipAddress_ET);
 //        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
 //        fab.setOnClickListener(this);
-
+        Button btn_stringReceive = (Button) view.findViewById(R.id.btn_string_recieve);
+        btn_stringReceive.setOnClickListener(this);
 
         return view;
     }
@@ -57,13 +59,13 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
 
         switch (view.getId())
         {
-            case R.id.fab:
+            case R.id.btn_string_recieve:
                 ipAddress = ipAddress_ET.getText().toString();
                 Snackbar.make(view, "Socket, ipAddress: " + ipAddress, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 Toast.makeText(myActivity, ipAddress, Toast.LENGTH_SHORT).show();
-                //new socketComm().execute(ipAddress); //GS Added
+                new socketComm().execute(ipAddress); //GS Added
                 break;
         }
     }
@@ -80,7 +82,6 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
             try{
                 s = new Socket(hostname, 1024);
                 BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-
                 payLoad = input.readLine();
 
             } catch (UnknownHostException e){

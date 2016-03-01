@@ -19,8 +19,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="10dp"
         android:text="Hello World!"
         android:id="@+id/payLoad"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recieve"
+            android:id="@+id/btn_string_recieve"/>
 
     </LinearLayout>
 </FrameLayout>
