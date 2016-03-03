@@ -80,7 +80,7 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
             String hostname = params[0]; //ipAddress;
 
             try{
-                s = new Socket(hostname, 1024);
+                s = new Socket(hostname, 5000);
                 BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 payLoad = input.readLine();
 
