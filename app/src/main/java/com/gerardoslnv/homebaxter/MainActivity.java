@@ -3,6 +3,7 @@ package com.gerardoslnv.homebaxter;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity
 
     String ipAddress;
     FragmentManager fragManager;
+
+    Fragment currentFrag = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +59,8 @@ public class MainActivity extends AppCompatActivity
 
         //GS Added
         fragManager = getFragmentManager();
-        Fragment helloFragment = new hello_Fragment();
-        fragManager.beginTransaction().replace(R.id.main_content, helloFragment).commit();
+        currentFrag = new hello_Fragment();
+        fragManager.beginTransaction().replace(R.id.main_content, currentFrag).commit();
         fragManager.executePendingTransactions();
     }
 
@@ -99,6 +103,9 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -110,30 +117,46 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fragManager.beginTransaction();
         Fragment myFragment = null;
 
-        if (id == R.id.nav_live_feed) {
-            // Handle the camera action
-        } else if (id == R.id.nav_grasp_object) {
-            Bundle bundle = new Bundle();
-            myFragment = new grasp_objectFragment();
-            bundle.putString(getResources().getString(R.string.key_ip_address), ipAddress); //pass ip address to other fragments
-            myFragment.setArguments(bundle);
-            fragmentTransaction.replace(containerId,myFragment, "Some Title Here");
+        switch (id){
+            case R.id.nav_live_feed:
+                break;
+            case R.id.nav_grasp_object:
 
-        } else if (id == R.id.nav_share) {
+                myFragment = new grasp_objectFragment();
 
-        } else if (id == R.id.nav_send) {
-
+                //TODO fix this if statement to detect if "hello_fragment" is visible
+                if(currentFrag instanceof hello_Fragment){
+                    //Toast.makeText(MainActivity.this, "bundling ipAddress", Toast.LENGTH_SHORT).show();
+                    //get Edit text from hello_Fragment
+                    ipAddress = ((EditText) currentFrag.getView().findViewById(R.id.ipAddress_ET)).getText().toString();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(getResources().getString(R.string.key_ip_address), ipAddress); //pass ip address to other fragments
+                    myFragment.setArguments(bundle);
+                }
+                if (!(currentFrag instanceof grasp_objectFragment)){
+                    //if not active, make it the active fragment
+                    fragmentTransaction.replace(containerId, myFragment, "Some Title Here");
+                    currentFrag = myFragment;
+                    finishTransaction(fragmentTransaction, containerId, currentFrag);
+                    break;
+                }
         }
 
-        fragmentTransaction.commit();
-        fragManager.executePendingTransactions();
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 
+    private void finishTransaction(FragmentTransaction fragmentTransaction, int containerId, Fragment fragment) {
+        fragmentTransaction.commit();
+        fragManager.executePendingTransactions();
 
-
-
-
+        return;
+    }
 }

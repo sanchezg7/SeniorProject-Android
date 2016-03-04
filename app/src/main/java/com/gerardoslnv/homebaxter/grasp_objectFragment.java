@@ -41,7 +41,11 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
         appPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
         //temporary implementation -- refer to bundle next time
-        hostname = "10.224.34.238";
+        //Bundle bundle = this.getArguments();
+
+        Bundle bundle = this.getArguments();
+        hostname = bundle.getString(getResources().getString(R.string.key_ip_address));
+        //hostname = "10.224.34.238";
         port = 5000;
 
         return view;

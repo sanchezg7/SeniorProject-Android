@@ -44,14 +44,17 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
         myActivity = getActivity();
         view = inflater.inflate(R.layout.fragment_hello_, container, false);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
         //Add ipAddress Edit Text
         ipAddress_ET = (EditText) view.findViewById(R.id.ipAddress_ET);
 //        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
 //        fab.setOnClickListener(this);
         Button btn_stringReceive = (Button) view.findViewById(R.id.btn_string_recieve);
         btn_stringReceive.setOnClickListener(this);
-
-        return view;
     }
 
     @Override

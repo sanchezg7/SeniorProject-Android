@@ -19,8 +19,8 @@
             android:id="@+id/btn_image_receive"/>
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:id="@+id/robotViewImageView"
             android:layout_gravity="center_horizontal|top"
             android:background="@drawable/misc"/>
