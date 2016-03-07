@@ -10,22 +10,28 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 import java.io.File;
 import java.io.IOException;
 
 
-public class grasp_objectFragment extends Fragment implements View.OnClickListener{
+public class grasp_objectFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     Activity myActivity;
     Button btn_receive;
+    Button btn_send; //Button equivalent to grab
     private String appPath;
     private String hostname;
     private int port;
     ImageView img;
     File baxter_image;
+    ListView listView_itemSelect;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -33,15 +39,22 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
         //set Context
         myActivity = getActivity();
         View view = inflater.inflate(R.layout.fragment_grasp_object, container, false);
+        //image stuff
         img = (ImageView) view.findViewById(R.id.robotViewImageView);
         img.setImageResource(R.drawable.baxter_robot);
 
+        //listView stuff
+        listView_itemSelect = (ListView) view.findViewById(R.id.listView_itemSelect);
+        listView_itemSelect.setOnItemClickListener(this);
+
         btn_receive = (Button) view.findViewById(R.id.btn_image_receive);
         btn_receive.setOnClickListener(this);
+
+        btn_send = (Button) view.findViewById(R.id.btn_send_object);
+        btn_send.setOnClickListener(this);
+
         appPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
-        //temporary implementation -- refer to bundle next time
-        //Bundle bundle = this.getArguments();
 
         Bundle bundle = this.getArguments();
         hostname = bundle.getString(getResources().getString(R.string.key_ip_address));
@@ -50,6 +63,7 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
 
         return view;
     }
+
 
     @Override
     public void onClick(View view){
@@ -61,30 +75,73 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
                 //Toast.makeText(myActivity, "Btn_image_receive", Toast.LENGTH_SHORT).show();
                 new receiveImage().execute();
                 break;
+            case R.id.btn_send_object:
+                //send a string object via the socket handler
+                break;
+        }
+    }
+
+    CheckedTextView mCheckedTextView = null;
+
+    //for list view
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        if(mCheckedTextView != null){
+            //previously assigned, uncheck it
+            mCheckedTextView.setChecked(!mCheckedTextView.isChecked());
+        }
+
+        mCheckedTextView = ((CheckedTextView) view);
+        mCheckedTextView.setChecked(!mCheckedTextView.isChecked());
+
+
+    }
+
+    private class sendObjectResponse extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+            return null;
         }
     }
 
     private class receiveImage extends AsyncTask<String, Void, String>{
 
         socketHandler handle = new socketHandler(appPath, hostname, port);
+        String[] objectIndexes;
 
         @Override
         protected String doInBackground(String... params) {
 
             try {
-                baxter_image = handle.dataTransaction(); //as opposed to socketReciever.dataTransaction -- static method
+                baxter_image = handle.receiveObjectsPayload(); //as opposed to socketReciever.receiveObjectsPayload -- static method
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            //preparing elements for listview
+            objectIndexes =  new String[handle.getNumObject_Payload()];
+
+            for(int i = 0; i < handle.getNumObject_Payload(); ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
 
             return null;
         }
 
         @Override
         protected void onPostExecute(String result){
-            //File image = new File(handle.getFullImagePath());
+            //Set the image
             Bitmap bitmap = BitmapFactory.decodeFile(handle.getFullImagePath());
             img.setImageBitmap(bitmap);
+
+            //Set the listview
+            //result holds the number of objects (detected sent by the server)
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(myActivity,
+                    android.R.layout.simple_list_item_single_choice, objectIndexes);
+            //listView_itemSelect.setItemsCanFocus(true);
+
+            listView_itemSelect.setAdapter(arrayAdapter);
+
+
         }
     }
 }

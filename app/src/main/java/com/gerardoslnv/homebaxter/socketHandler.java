@@ -39,7 +39,7 @@ public class socketHandler {
     public int getNumObject_Payload(){return numObject_Payload;}
 
 
-    public File dataTransaction() throws IOException {
+    public File receiveObjectsPayload() throws IOException {
         File file;
 
         Socket stringSocket = startConnection(hostname, port+1);
@@ -49,6 +49,13 @@ public class socketHandler {
         file = receiveImage(imageSocket, file);
 
         return file;
+    }
+
+    public void transmitObjectIndex(int objectIndex) throws IOException{
+
+        Socket stringSocket = startConnection(hostname, port+2);
+
+        return;
     }
 
     private Socket startConnection(String hostname, int port) throws IOException{
@@ -64,6 +71,9 @@ public class socketHandler {
         return file;
     }
 
+
+    //should only be run separate from the UI thread
+
     private int receiveNumObjects(Socket mySoc) throws IOException{
         BufferedReader stringInput = new BufferedReader(new InputStreamReader(mySoc.getInputStream()));
 
@@ -74,7 +84,7 @@ public class socketHandler {
 
     }
 
-    //consider making this an asynchtask
+
     private File receiveImage(Socket mySoc, File file) throws IOException {
 
         DataInputStream din = new DataInputStream(mySoc.getInputStream());

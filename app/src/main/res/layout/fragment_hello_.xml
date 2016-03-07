@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/ipAddress_ET"
         android:hint="Enter IP Address"
-        android:inputType="phone"
+        android:inputType="textUri"
         />
 
 
