@@ -1,12 +1,16 @@
 package com.gerardoslnv.homebaxter;
 
+import android.provider.ContactsContract;
+
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 /**
@@ -51,12 +55,7 @@ public class socketHandler {
         return file;
     }
 
-    public void transmitObjectIndex(int objectIndex) throws IOException{
 
-        Socket stringSocket = startConnection(hostname, port+2);
-
-        return;
-    }
 
     private Socket startConnection(String hostname, int port) throws IOException{
         return new Socket(hostname, port); //throws UHE and IOE exceptions;
@@ -71,8 +70,29 @@ public class socketHandler {
         return file;
     }
 
+    /******************************************************
+    *Sending Method
+    ******************************************************/
+    public void transmitObjectIndex(int objectIndex) throws IOException{
 
-    //should only be run separate from the UI thread
+        Socket stringSocket = startConnection(hostname, port+2);
+        //used BufferedWriter rather than DataOutputWriter due to garbage being sent through the socket
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stringSocket.getOutputStream()));
+        String payLoad = String.valueOf(objectIndex);
+        writer.write(payLoad, 0, payLoad.length());
+
+        writer.flush();
+        writer.close();
+        stringSocket.close();
+
+        return;
+    }
+
+
+    /****************************************************
+     * Receiving methods
+     ****************************************************/
+
 
     private int receiveNumObjects(Socket mySoc) throws IOException{
         BufferedReader stringInput = new BufferedReader(new InputStreamReader(mySoc.getInputStream()));
@@ -80,8 +100,6 @@ public class socketHandler {
         int temp = Integer.parseInt(stringInput.readLine());
         mySoc.close();
         return temp;
-
-
     }
 
 
@@ -105,9 +123,6 @@ public class socketHandler {
 
         return file;
     }
-
-
-
 
 
 //    //Socket Reception Task **********

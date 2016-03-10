@@ -19,6 +19,7 @@ import android.widget.ListView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.SocketHandler;
 
 
 public class grasp_objectFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -26,11 +27,16 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
     Activity myActivity;
     Button btn_receive;
     Button btn_send; //Button equivalent to grab
+
     private String appPath;
     private String hostname;
     private int port;
+
     ImageView img;
     File baxter_image;
+
+    int objectIndex;
+
     ListView listView_itemSelect;
 
     @Override
@@ -77,6 +83,8 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
                 break;
             case R.id.btn_send_object:
                 //send a string object via the socket handler
+
+                new sendObjectResponse().execute();
                 break;
         }
     }
@@ -94,14 +102,20 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
 
         mCheckedTextView = ((CheckedTextView) view);
         mCheckedTextView.setChecked(!mCheckedTextView.isChecked());
-
-
+        objectIndex = position;
     }
 
     private class sendObjectResponse extends AsyncTask<String, Void, String>{
 
+        socketHandler handle = new socketHandler(appPath, hostname, port);
+
         @Override
         protected String doInBackground(String... params) {
+            try {
+                handle.transmitObjectIndex(objectIndex);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return null;
         }
     }
