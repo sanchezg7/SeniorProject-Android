@@ -11,18 +11,10 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.gerardoslnv.homebaxter.MainActivity"
-    tools:showIn="@layout/app_bar_main">
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ipAddress_ET"
-        android:hint="Enter IP Address"/>
+    tools:showIn="@layout/app_bar_main"
+    android:id = "@+id/main_content">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/payLoad"/>
+
+
 </LinearLayout>
