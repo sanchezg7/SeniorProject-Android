@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
     String ipAddress;
     FragmentManager fragManager;
 
-    Fragment currentFrag = null;
+    public Fragment currentFrag = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,43 +103,49 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-
-
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         int containerId = R.id.main_content;
 
-
         FragmentTransaction fragmentTransaction = fragManager.beginTransaction();
         Fragment myFragment = null;
 
         switch (id){
-            case R.id.nav_live_feed:
+            case R.id.nav_home:
+                if(!(currentFrag instanceof hello_Fragment)){
+                    myFragment = new hello_Fragment();
+                    currentFrag = myFragment;
+                    fragmentTransaction.replace(containerId, myFragment, "Hello Fragment Home");
+                    finishTransaction(fragmentTransaction, containerId, currentFrag);
+                    break;
+                }
                 break;
             case R.id.nav_grasp_object:
 
-                myFragment = new grasp_objectFragment();
-
                 //TODO fix this if statement to detect if "hello_fragment" is visible
-                if(currentFrag instanceof hello_Fragment){
-                    //Toast.makeText(MainActivity.this, "bundling ipAddress", Toast.LENGTH_SHORT).show();
-                    //get Edit text from hello_Fragment
+                if (!(currentFrag instanceof grasp_objectFragment)){
+                    //if not active, make grasp_objectFragment the active fragment
+                    myFragment = new grasp_objectFragment();
+                    fragmentTransaction.replace(containerId, myFragment, "IDK Some Title Here");
+
+                }
+                if(currentFrag instanceof hello_Fragment)
+                { //save the ip address from the hello screen and MOVE ON
+
                     ipAddress = ((EditText) currentFrag.getView().findViewById(R.id.ipAddress_ET)).getText().toString();
                     Bundle bundle = new Bundle();
                     bundle.putString(getResources().getString(R.string.key_ip_address), ipAddress); //pass ip address to other fragments
                     myFragment.setArguments(bundle);
-                }
-                if (!(currentFrag instanceof grasp_objectFragment)){
-                    //if not active, make it the active fragment
-                    fragmentTransaction.replace(containerId, myFragment, "Some Title Here");
                     currentFrag = myFragment;
-                    finishTransaction(fragmentTransaction, containerId, currentFrag);
-                    break;
                 }
+                finishTransaction(fragmentTransaction, containerId, currentFrag);
+                break;
+            default:
+                Toast.makeText(MainActivity.this, "Error Selecting Menu Item", Toast.LENGTH_SHORT).show();
+                break;
+
         }
 
 //        } else if (id == R.id.nav_share) {

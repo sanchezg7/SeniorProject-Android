@@ -9,8 +9,13 @@
     <string name="senior_project">Senior Project Spring 2016</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="string_grasp_object">Grasp an Object</string>
-    <string name="string_live_feed">Live Feed</string>
+    <string name="str_hello_blank_fragment">Hello blank fragment</string>
+    <string name="str_grasp_object">Grasp an Object</string>
+    <string name="str_live_feed">Live Feed</string>
     <string name="key_ip_address">key_ip_address</string>
+    <string name="str_home">Home</string>
+    <string name="str_get_started">To get started, ensure your server is on the same local network and enter the servers IP Address above.</string>
+    <string name="str_introduction">This project was developed by USF Computer Engineering students as part of the Capstone course.
+        CARRTs vision is to be a leader in global collaborative research, education and service for improving the quality of life of individuals with impairments and
+        functional limitations due to aging and disability. Special thanks to Dr. Redwan Alqsemi, Dr. Ken Christensen, and Kyle Ashley.</string>
 </resources>
