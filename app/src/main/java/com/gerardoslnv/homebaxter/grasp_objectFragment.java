@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -29,10 +30,10 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
 
     private SwipeRefreshLayout mSwipeRefresh;
 
-
     Activity myActivity;
     Button btn_receive;
-    Button btn_send; //Button equivalent to grab
+
+    TextView tv_ipAddress;
 
     private String appPath;
     private String hostname;
@@ -61,12 +62,18 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
 
         //Swipe Refresh Interface
         mSwipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer_fragment_graspObject);
+        //mSwipeRefresh.setEnabled(true);
         mSwipeRefresh.setOnRefreshListener(this);
+        mSwipeRefresh.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
-        mSwipeRefresh.setColorSchemeResources(R.color.blue, R.color.green, R.color.orange, R.color.red);
+        btn_receive = (Button) view.findViewById(R.id.btn_image_receive);
+        btn_receive.setOnClickListener(this);
 
-//        btn_receive = (Button) view.findViewById(R.id.btn_image_receive);
-//        btn_receive.setOnClickListener(this);
+        //ip address textview
+        tv_ipAddress = (TextView) view.findViewById(R.id.tv_ipAddr);
 
         appPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
@@ -74,6 +81,7 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
         hostname = bundle.getString(getResources().getString(R.string.key_ip_address));
         port = 5000;
 
+        tv_ipAddress.setText(hostname);
         return view;
     }
 
@@ -95,8 +103,6 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
     }
 
     CheckedTextView mCheckedTextView = null;
-
-
 
     //listens to list view elements
     @Override
@@ -123,13 +129,15 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onRefresh() {
+//        mSwipeRefresh.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mSwipeRefresh.setRefreshing(true);
+//            }
+//        });
+        mSwipeRefresh.setRefreshing(true);
         Toast.makeText(myActivity, "Refresh requested", Toast.LENGTH_SHORT).show();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            mSwipeRefresh.setEnabled(false);
-        }
+        new receiveImage().execute();
     }
 
     private class sendObjectResponse extends AsyncTask<String, Void, String>{
@@ -155,13 +163,13 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
         @Override
         protected String doInBackground(String... params) {
 
-//            try {
-//                baxter_image = handle.receiveObjectsPayload(); //as opposed to socketReciever.receiveObjectsPayload -- static method
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-            //preparing elements for listview
+            try {
+                baxter_image = handle.receiveObjectsPayload(); //as opposed to socketReciever.receiveObjectsPayload -- static method
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
+            //preparing elements for listview
             objectIndexes =  new String[3]; //handle.getNumObject_Payload()];
 //            for(int i = 0; i < handle.getNumObject_Payload(); ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
             for(int i = 0; i < 3; ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
@@ -171,6 +179,8 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
 
         @Override
         protected void onPostExecute(String result){
+
+            mSwipeRefresh.setRefreshing(false);
             //Set the image
             Bitmap bitmap = BitmapFactory.decodeFile(handle.getFullImagePath());
             img.setImageBitmap(bitmap);
@@ -182,8 +192,6 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
             //listView_itemSelect.setItemsCanFocus(true);
 
             listView_itemSelect.setAdapter(arrayAdapter);
-
-
         }
     }
 }
