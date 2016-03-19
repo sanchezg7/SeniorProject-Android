@@ -118,46 +118,11 @@ public class socketHandler {
             dout.write(buffer, 0, count);
             dout.flush(); //force a write
         }
+
         dout.close(); //finally close
         mySoc.close();
 
         return file;
     }
-
-
-//    //Socket Reception Task **********
-//    private class socketComm extends AsyncTask<String, Void, String> {
-//
-//        @Override
-//        protected String doInBackground(String... params) {
-//            Socket s;
-//            String payLoad = null;
-//            String hostname = params[0]; //ipAddress;
-//
-//            try{
-//                s = new Socket(hostname, 1024);
-//                BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-//                payLoad = input.readLine();
-//
-//            } catch (UnknownHostException e){
-//                e.printStackTrace();
-//            } catch (IOException e){
-//                e.printStackTrace();
-//            }
-//
-//            return payLoad;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String result){
-//            TextView txt = (TextView) view.findViewById(R.id.payLoad);
-//            txt.setText(result);
-//        }
-//    }
-
-
-
-
-
 
 }

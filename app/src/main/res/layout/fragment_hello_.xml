@@ -2,34 +2,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gerardoslnv.homebaxter.hello_Fragment">
+    tools:context="com.gerardoslnv.homebaxter.hello_Fragment"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ipAddress_ET"
-        android:hint="Enter IP Address"
-        android:inputType="textUri"
-        />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/carrt_logo" />
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Hello World!"
-        android:id="@+id/payLoad"/>
-
-        <Button
+        <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recieve"
-            android:id="@+id/btn_string_recieve"/>
+            android:id="@+id/ipAddress_ET"
+            android:hint="Enter IP Address"
+            android:inputType="textUri"
+            android:layout_gravity="center"
+            />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text= "@string/str_get_started"/>
+
+            <!-- Brief description of the objective -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="italic"
+                android:text="@string/str_introduction"/>
     </LinearLayout>
 </FrameLayout>

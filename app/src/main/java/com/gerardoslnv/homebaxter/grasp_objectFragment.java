@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +18,22 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.SocketHandler;
 
 
-public class grasp_objectFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
+
+public class grasp_objectFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
+
+    private SwipeRefreshLayout mSwipeRefresh;
 
     Activity myActivity;
     Button btn_receive;
-    Button btn_send; //Button equivalent to grab
+
+    TextView tv_ipAddress;
 
     private String appPath;
     private String hostname;
@@ -53,56 +60,84 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
         listView_itemSelect = (ListView) view.findViewById(R.id.listView_itemSelect);
         listView_itemSelect.setOnItemClickListener(this);
 
+        //Swipe Refresh Interface
+        mSwipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer_fragment_graspObject);
+        //mSwipeRefresh.setEnabled(true);
+        mSwipeRefresh.setOnRefreshListener(this);
+        mSwipeRefresh.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         btn_receive = (Button) view.findViewById(R.id.btn_image_receive);
         btn_receive.setOnClickListener(this);
 
-        btn_send = (Button) view.findViewById(R.id.btn_send_object);
-        btn_send.setOnClickListener(this);
+        //ip address textview
+        tv_ipAddress = (TextView) view.findViewById(R.id.tv_ipAddr);
 
         appPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
-
         Bundle bundle = this.getArguments();
         hostname = bundle.getString(getResources().getString(R.string.key_ip_address));
-        //hostname = "10.224.34.238";
         port = 5000;
 
+        tv_ipAddress.setText(hostname);
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
 
     @Override
     public void onClick(View view){
         int id = view.getId();
-
         switch (id){
             case R.id.btn_image_receive:
                 //start transaction
                 //Toast.makeText(myActivity, "Btn_image_receive", Toast.LENGTH_SHORT).show();
                 new receiveImage().execute();
                 break;
-            case R.id.btn_send_object:
-                //send a string object via the socket handler
-
-                new sendObjectResponse().execute();
-                break;
         }
     }
 
     CheckedTextView mCheckedTextView = null;
 
-    //for list view
+    //listens to list view elements
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        if(mCheckedTextView != null){
-            //previously assigned, uncheck it
-            mCheckedTextView.setChecked(!mCheckedTextView.isChecked());
+        if(mCheckedTextView != null)
+        {
+            //uncheck the old object
+            mCheckedTextView.setChecked(false);
         }
 
+        //set the new item checked and make the user confirm their selection with through the snackbar
         mCheckedTextView = ((CheckedTextView) view);
-        mCheckedTextView.setChecked(!mCheckedTextView.isChecked());
+        mCheckedTextView.setChecked(true);
         objectIndex = position;
+        Snackbar.make(myActivity.findViewById(R.id.frg_grasp_object), "Object " + position + " selected", Snackbar.LENGTH_LONG)
+                .setAction("Confirm selection", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new sendObjectResponse().execute();
+                    }
+                }).setActionTextColor(myActivity.getResources().getColor(R.color.colorConfirm)).show();
+    }
+
+    @Override
+    public void onRefresh() {
+//        mSwipeRefresh.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mSwipeRefresh.setRefreshing(true);
+//            }
+//        });
+        mSwipeRefresh.setRefreshing(true);
+        Toast.makeText(myActivity, "Refresh requested", Toast.LENGTH_SHORT).show();
+        new receiveImage().execute();
     }
 
     private class sendObjectResponse extends AsyncTask<String, Void, String>{
@@ -133,16 +168,19 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //preparing elements for listview
-            objectIndexes =  new String[handle.getNumObject_Payload()];
 
-            for(int i = 0; i < handle.getNumObject_Payload(); ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
+            //preparing elements for listview
+            objectIndexes =  new String[3]; //handle.getNumObject_Payload()];
+//            for(int i = 0; i < handle.getNumObject_Payload(); ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
+            for(int i = 0; i < 3; ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
 
             return null;
         }
 
         @Override
         protected void onPostExecute(String result){
+
+            mSwipeRefresh.setRefreshing(false);
             //Set the image
             Bitmap bitmap = BitmapFactory.decodeFile(handle.getFullImagePath());
             img.setImageBitmap(bitmap);
@@ -154,8 +192,6 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
             //listView_itemSelect.setItemsCanFocus(true);
 
             listView_itemSelect.setAdapter(arrayAdapter);
-
-
         }
     }
 }

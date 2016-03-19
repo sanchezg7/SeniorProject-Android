@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#d32f2f</color>
-    <color name="colorPrimaryDark">#831b1b</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#ec2828</color>
+    <color name="colorPrimaryDark">#b42727</color>
+    <color name="colorAccent">#ff404a</color>
+    <color name="colorConfirm">#5fd226</color>
+    
+    <!--Generic Colors added 15 Mar 2016 -->
+    <color name="white" >#FFFFFF</color>
+    <color name="blue" >#FF33B5E5</color>
+    <color name="purple" >#FFAA66CC</color>
+    <color name="green" >#FF99CC00</color>
+    <color name="orange" >#FFFFBB33</color>
+    <color name="red" >#FFFF4444</color>
+    <color name="darkblue" >#FF0099CC</color>
+    <color name="darkpurple" >#FF9933CC</color>
+    <color name="darkgreen" >#FF669900</color>
+    <color name="darkorange" >#FFFF8800</color>
+    <color name="darkred" >#FFCC0000</color>
+    <color name="black" >#000000</color>
+    <color name="beige">#f5f1e5</color>
 </resources>

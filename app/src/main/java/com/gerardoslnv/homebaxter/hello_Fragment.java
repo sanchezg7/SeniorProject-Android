@@ -53,8 +53,8 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
         ipAddress_ET = (EditText) view.findViewById(R.id.ipAddress_ET);
 //        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
 //        fab.setOnClickListener(this);
-        Button btn_stringReceive = (Button) view.findViewById(R.id.btn_string_recieve);
-        btn_stringReceive.setOnClickListener(this);
+        //Button btn_stringReceive = (Button) view.findViewById(R.id.btn_string_recieve);
+        //btn_stringReceive.setOnClickListener(this);
     }
 
     @Override
@@ -62,14 +62,14 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
 
         switch (view.getId())
         {
-            case R.id.btn_string_recieve:
-                ipAddress = ipAddress_ET.getText().toString();
-                Snackbar.make(view, "Socket, ipAddress: " + ipAddress, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                Toast.makeText(myActivity, ipAddress, Toast.LENGTH_SHORT).show();
-                new socketComm().execute(ipAddress); //GS Added
-                break;
+//            case R.id.btn_string_recieve:
+//                ipAddress = ipAddress_ET.getText().toString();
+//                Snackbar.make(view, "Socket, ipAddress: " + ipAddress, Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//
+//                Toast.makeText(myActivity, ipAddress, Toast.LENGTH_SHORT).show();
+//                new socketComm().execute(ipAddress); //GS Added
+//                break;
         }
     }
 
@@ -98,8 +98,8 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected void onPostExecute(String result){
-            TextView txt = (TextView) view.findViewById(R.id.payLoad);
-            txt.setText(result);
+//            TextView txt = (TextView) view.findViewById(R.id.payLoad);
+//            txt.setText(result);
         }
     }
 
