@@ -170,9 +170,9 @@ public class grasp_objectFragment extends Fragment implements View.OnClickListen
             }
 
             //preparing elements for listview
-            objectIndexes =  new String[3]; //handle.getNumObject_Payload()];
-//            for(int i = 0; i < handle.getNumObject_Payload(); ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
-            for(int i = 0; i < 3; ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
+            objectIndexes =  new String[handle.getNumObject_Payload()];
+            for(int i = 0; i < handle.getNumObject_Payload(); ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
+//            for(int i = 0; i < 3; ++i) objectIndexes[i] = "Object " + String.valueOf(i) ;
 
             return null;
         }

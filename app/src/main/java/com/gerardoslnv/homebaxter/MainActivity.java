@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity
 
     String ipAddress;
     FragmentManager fragManager;
+    SharedPreferences.Editor mSPEditor;
+    SharedPreferences mSp;
 
     public Fragment currentFrag = null;
 
@@ -62,6 +65,9 @@ public class MainActivity extends AppCompatActivity
         currentFrag = new hello_Fragment();
         fragManager.beginTransaction().replace(R.id.main_content, currentFrag).commit();
         fragManager.executePendingTransactions();
+
+        //to recall the ip address
+        mSp = getSharedPreferences(getResources().getString(R.string.mainActivity_SP), MODE_PRIVATE);
     }
 
 
@@ -135,6 +141,12 @@ public class MainActivity extends AppCompatActivity
                 { //save the ip address from the hello screen and MOVE ON
 
                     ipAddress = ((EditText) currentFrag.getView().findViewById(R.id.ipAddress_ET)).getText().toString();
+
+                    //Save SharedPreferences for ip address
+                    mSPEditor = mSp.edit(); //returns an instance of SharedPreferences.Editor object
+                    mSPEditor.putString(this.getResources().getString(R.string.key_ip_address), ipAddress);
+                    mSPEditor.commit(); //finalize the changes
+
                     Bundle bundle = new Bundle();
                     bundle.putString(getResources().getString(R.string.key_ip_address), ipAddress); //pass ip address to other fragments
                     myFragment.setArguments(bundle);

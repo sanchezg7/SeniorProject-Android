@@ -2,6 +2,7 @@ package com.gerardoslnv.homebaxter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,12 +33,14 @@ import java.util.zip.Inflater;
  * Use the {@link hello_Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class hello_Fragment extends Fragment implements View.OnClickListener {
+public class hello_Fragment extends Fragment {
 
     Activity myActivity;
     EditText ipAddress_ET; //edit text
     String ipAddress;
     View view;
+    SharedPreferences mSp;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -51,29 +54,16 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, Bundle savedInstanceState){
         //Add ipAddress Edit Text
         ipAddress_ET = (EditText) view.findViewById(R.id.ipAddress_ET);
-//        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-//        fab.setOnClickListener(this);
-        //Button btn_stringReceive = (Button) view.findViewById(R.id.btn_string_recieve);
-        //btn_stringReceive.setOnClickListener(this);
+
+
+        //SharedPreferences for ip address
+        //retrieve the previous ip if it exist
+        mSp = myActivity.getSharedPreferences(getResources().getString(R.string.mainActivity_SP), Context.MODE_PRIVATE);
+        String prevIP = mSp.getString(myActivity.getResources().getString(R.string.key_ip_address), ""); //return empty string if not found
+        ipAddress_ET.setText(prevIP);
     }
 
-    @Override
-    public void onClick(View view) {
-
-        switch (view.getId())
-        {
-//            case R.id.btn_string_recieve:
-//                ipAddress = ipAddress_ET.getText().toString();
-//                Snackbar.make(view, "Socket, ipAddress: " + ipAddress, Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//
-//                Toast.makeText(myActivity, ipAddress, Toast.LENGTH_SHORT).show();
-//                new socketComm().execute(ipAddress); //GS Added
-//                break;
-        }
-    }
-
-    //Socket Reception Task **********
+    //Socket Reception Task for a string **********
     private class socketComm extends AsyncTask<String, Void, String> {
 
         @Override
@@ -92,7 +82,6 @@ public class hello_Fragment extends Fragment implements View.OnClickListener {
             } catch (IOException e){
                 e.printStackTrace();
             }
-
             return payLoad;
         }
 
