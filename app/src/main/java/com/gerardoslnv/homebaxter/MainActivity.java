@@ -4,12 +4,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,16 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
@@ -87,6 +75,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -102,11 +91,39 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.action_about:
+                openAboutDialog();
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
 
-        return super.onOptionsItemSelected(item);
+
+    }
+
+    void openAboutDialog(){
+        about_Fragment mAboutFragment = new about_Fragment();
+        mAboutFragment.show(getSupportFragmentManager().beginTransaction(), "about_menu");
+    }
+
+    public <nxt> boolean switchFragments(nxt nextFrag, int containerId)
+    {
+        FragmentManager mFragmentManager = this.getFragmentManager();
+        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+        Fragment mFragment = null;
+        //currentFrag = (Fragment) nextFrag;
+        this.setCurrentFrag((Fragment) nextFrag);
+
+        mFragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        mFragmentTransaction.replace(containerId, currentFrag, "switched Fragments Function");
+        finishTransaction(mFragmentTransaction, containerId);
+        return true;
+    }
+
+    public void setCurrentFrag(Fragment fragment){
+        this.currentFrag = fragment;
+        return;
     }
 
     @Override
@@ -122,37 +139,29 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_home:
                 if(!(currentFrag instanceof hello_Fragment)){
                     myFragment = new hello_Fragment();
-                    currentFrag = myFragment;
-                    fragmentTransaction.replace(containerId, myFragment, "Hello Fragment Home");
-                    finishTransaction(fragmentTransaction, containerId, currentFrag);
+                    switchFragments(myFragment, containerId);
                     break;
                 }
                 break;
             case R.id.nav_grasp_object:
-
-                //TODO fix this if statement to detect if "hello_fragment" is visible
-                if (!(currentFrag instanceof grasp_objectFragment)){
-                    //if not active, make grasp_objectFragment the active fragment
-                    myFragment = new grasp_objectFragment();
-                    fragmentTransaction.replace(containerId, myFragment, "IDK Some Title Here");
-
-                }
                 if(currentFrag instanceof hello_Fragment)
-                { //save the ip address from the hello screen and MOVE ON
+                {
+                    myFragment = new graspObject_Fragment();
 
+                    //save the ip address from the hello screen and MOVE ON
                     ipAddress = ((EditText) currentFrag.getView().findViewById(R.id.ipAddress_ET)).getText().toString();
 
                     //Save SharedPreferences for ip address
                     mSPEditor = mSp.edit(); //returns an instance of SharedPreferences.Editor object
                     mSPEditor.putString(this.getResources().getString(R.string.key_ip_address), ipAddress);
-                    mSPEditor.commit(); //finalize the changes
+                    mSPEditor.commit();     //finalize the changes
 
                     Bundle bundle = new Bundle();
                     bundle.putString(getResources().getString(R.string.key_ip_address), ipAddress); //pass ip address to other fragments
+
                     myFragment.setArguments(bundle);
-                    currentFrag = myFragment;
+                    switchFragments(myFragment, containerId);
                 }
-                finishTransaction(fragmentTransaction, containerId, currentFrag);
                 break;
             default:
                 Toast.makeText(MainActivity.this, "Error Selecting Menu Item", Toast.LENGTH_SHORT).show();
@@ -160,18 +169,13 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
         return true;
     }
 
-    private void finishTransaction(FragmentTransaction fragmentTransaction, int containerId, Fragment fragment) {
+    private void finishTransaction(FragmentTransaction fragmentTransaction, int containerId) {
         fragmentTransaction.commit();
         fragManager.executePendingTransactions();
 

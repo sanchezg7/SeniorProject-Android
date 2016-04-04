@@ -3,7 +3,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/frg_grasp_object"
-        tools:context="com.gerardoslnv.homebaxter.grasp_objectFragment">
+        tools:context=".graspObject_Fragment">
         <!-- put SwipeRefreshLayout inside the FrameLayout to avoid overlapping with other fragments -->
 
         <TextView

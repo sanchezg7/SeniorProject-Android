@@ -17,14 +17,30 @@
             android:src="@drawable/carrt_logo" />
 
 
-        <EditText
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/ipAddress_ET"
-            android:hint="Enter IP Address"
-            android:inputType="textUri"
-            android:layout_gravity="center"
-            />
+            >
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ipAddress_ET"
+                android:hint="Enter IP Address"
+                android:inputType="textUri"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Grasp An Object"
+                android:id="@+id/btn_actionGraspObject"/>
+
+
+        </RelativeLayout>
+
 
         <TextView
             android:layout_width="match_parent"
