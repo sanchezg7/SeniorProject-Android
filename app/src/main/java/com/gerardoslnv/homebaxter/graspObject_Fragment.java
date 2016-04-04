@@ -26,7 +26,7 @@ import java.io.IOException;
 
 
 
-public class grasp_objectFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
+public class graspObject_Fragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
 
     private SwipeRefreshLayout mSwipeRefresh;
 
