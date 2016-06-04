@@ -1,5 +1,6 @@
 package com.gerardoslnv.homebaxter;
 
+import android.graphics.Bitmap;
 import android.provider.ContactsContract;
 
 import java.io.BufferedReader;
@@ -55,6 +56,11 @@ public class socketHandler {
         return file;
     }
 
+    public Bitmap liveFeed() throws IOException{
+        Bitmap bitmap = null;
+        return bitmap;
+    }
+    //continue here 12 - Apr - 2016
 
 
     private Socket startConnection(String hostname, int port) throws IOException{
